@@ -40,7 +40,7 @@ module ProviderMenuTestFixtures
   end
 end
 
-class MyMiniFactoryPluginTest
+class PrintablesPluginTest
   def test_provider_menu_registers_once_and_renders_sorted_native_items
     with_provider_menu_hooks do |originals|
       [ProviderMenuTestFixtures::Zulu, ProviderMenuTestFixtures::Alpha].each do |provider|
@@ -58,7 +58,7 @@ class MyMiniFactoryPluginTest
       document = Nokogiri::HTML(session.response.body)
       assert_equal 1, document.css("#nav-link-providers").size
       items = document.css("#providers-menu a.dropdown-item")
-      assert_equal [ProviderMenuTestFixtures::Alpha.label, "MyMiniFactory", ProviderMenuTestFixtures::Zulu.label],
+      assert_equal [ProviderMenuTestFixtures::Alpha.label, "Printables", ProviderMenuTestFixtures::Zulu.label],
         items.map { |item| item.text.strip }
       assert_equal "/manyfold/dashboard", items.first["href"]
       assert_equal "/manyfold/models", items.last["href"]
@@ -91,11 +91,11 @@ class MyMiniFactoryPluginTest
       assert_empty Nokogiri::HTML(session.response.body).css("#nav-link-providers, #providers-menu")
 
       PluginManager.components_for(:provider_menu).replace([
-        ProviderMenuTestFixtures::Hidden, Components::ManyfoldMyminifactory::ProviderMenuItem
+        ProviderMenuTestFixtures::Hidden, Components::ManyfoldPrintables::ProviderMenuItem
       ])
       session.get("/models")
       assert_equal 200, session.response.status
-      assert_equal ["MyMiniFactory"],
+      assert_equal ["Printables"],
         Nokogiri::HTML(session.response.body).css("#providers-menu a.dropdown-item").map { |item| item.text.strip }
     end
   end

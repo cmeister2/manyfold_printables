@@ -1,43 +1,36 @@
-# MyMiniFactory for Manyfold
+# Printables for Manyfold
 
-Import your MyMiniFactory library into Manyfold, link existing models, and sync metadata and images.
+Link Manyfold models to Printables, find fuzzy matches with public search, and sync model and creator details and images.
 
 ## Install
 
-Requires Manyfold 0.146.0 or newer. Importing and linking require administrator access.
+Requires Manyfold 0.146.0 or newer. Linking models and creators requires administrator access.
 
-1. Download `manyfold_myminifactory.zip` from the [latest release](https://github.com/cmeister2/manyfold_myminifactory/releases/latest).
-2. Upload it under **Settings > Plugins**, then restart Manyfold. Keep the ZIP filename unchanged when installing updates.
-3. Set your MyMiniFactory API key under **Settings > Integrations**. Create a Manyfold library if you do not have one.
+1. Download `manyfold_printables.zip` from the [latest release](https://github.com/cmeister2/manyfold_printables/releases/latest).
+2. Upload the ZIP under **Settings > Plugins**, then restart Manyfold. Keep the ZIP filename unchanged when installing updates.
+3. Printables linking is enabled by default. You can switch it off under **Settings > Integrations**. Create a Manyfold library if you do not have one.
 
 See Manyfold's [plugin installation guide](https://manyfold.app/sysadmin/plugins) for plugin directory setup.
 
-## Import your library
+## Link models
 
-1. Sign in to [MyMiniFactory](https://www.myminifactory.com/library) in your browser.
-2. Open the [library API page](https://www.myminifactory.com/api/data-library/objectPreviews).
-3. Copy the complete JSON response.
-4. In Manyfold, open **Providers > MyMiniFactory > Import**, paste the JSON, and select **Save**.
+Choose **Link to Printables** from an existing Manyfold model's menu. The page searches Printables using the model's name and ranks close matches. Adjust the search text if needed, then select **Use this model**. You can also enter a public model URL such as `https://www.printables.com/model/12345`, or its numeric ID. Select **Link and sync** to queue metadata and image sync.
 
-The import saves library records in the database. Duplicate MyMiniFactory IDs are merged; subsequent imports update existing records and retain entries absent from the new JSON.
+No Printables login or API credentials are required. This action appears when the Printables integration is enabled. Search failures leave the manual URL input available.
 
-## Create or link models
+You can also use Manyfold's **Add content > Import URL** with a public Printables model URL to create a new Manyfold model through its normal import flow. Sync imports details and images; download 3D model files from Printables and import them into Manyfold separately.
 
-**Status** lists imported entries and their links to Manyfold models. Choose **Create Model** on an unlinked entry to create a model in your default library and queue metadata and image sync.
-
-For an existing Manyfold model, choose **Link to MyMiniFactory** from its menu. The page suggests fuzzy matches from your imported library. Select **Use this model**, or enter a MyMiniFactory URL or ID, then select **Link and sync**. This action appears when an API key is configured.
-
-JSON import alone does not create Manyfold models. Creating or syncing a model imports its details and images; download its 3D model files from MyMiniFactory and import them into Manyfold separately.
+The integration uses Printables' GraphQL interface. Its automated tests use fictional API responses.
 
 ## Sync creators
 
-On the **Creators** page, choose **Link to MyMiniFactory** from a creator's menu, select one of their linked models, and choose **Link and sync**. The plugin uses that model to find the MyMiniFactory profile and sync the existing creator's name, biography, avatar, and banner. It preserves their ownership and model associations.
+On the **Creators** page, choose **Link to Printables** from a creator's menu, select one of their linked models, and choose **Link and sync**. The plugin uses that model to find the Printables profile and sync the existing creator's name, biography, avatar, and banner. It preserves their ownership and model associations.
 
-The action requires an API key and administrator access, a visible MyMiniFactory-linked model assigned to the creator, and no existing MyMiniFactory profile link. Once linked, use Manyfold's normal **Synchronize** action to refresh the profile.
+The action requires the Printables integration to be enabled and administrator access, a visible Printables-linked model assigned to the creator, and no existing Printables profile link. Printables profiles use URLs such as `https://www.printables.com/@example-studio`. Once linked, use Manyfold's normal **Synchronize** action to refresh the profile.
 
 ## Provider navigation
 
-The plugin adds MyMiniFactory to a shared **Providers** dropdown. The menu helper is bundled, so no additional plugin is required.
+The plugin adds Printables to a shared **Providers** dropdown. The menu helper is bundled, so no additional plugin is required.
 
 Other provider plugins can bundle `lib/manyfold/provider_menu.rb` unchanged and register their menu item after Rails initializes:
 
@@ -87,7 +80,7 @@ npm run test:release
 
 Semantic-release publishes from `main` using Conventional Commits: `fix:` produces a patch release, `feat:` a minor release, and a breaking change a major release.
 
-The source gemspec stays at `0.0.0`. The release prepare step writes the calculated version into the gemspec inside `manyfold_myminifactory.zip`.
+The source gemspec stays at `0.0.0`. The release prepare step writes the calculated version into the gemspec inside `manyfold_printables.zip`.
 
 Pull requests and manual CI runs preview the proposed release without publishing. You can run the same preview locally:
 
@@ -103,4 +96,4 @@ To build a ZIP locally with a specific version:
 python3 bin/package 0.1.0
 ```
 
-The archive is written to `dist/manyfold_myminifactory.zip`.
+The archive is written to `dist/manyfold_printables.zip`.

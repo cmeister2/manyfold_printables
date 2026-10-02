@@ -1,9 +1,9 @@
-name: manyfold-myminifactory-dev
+name: manyfold-printables-dev
 
 services:
   manyfold:
     build: .
-    image: manyfold-myminifactory-dev
+    image: manyfold-printables-dev
     ports:
       - "127.0.0.1:3214:3214"
     environment:
@@ -14,7 +14,7 @@ services:
       PGID: "1000"
     volumes:
       - local-config:/config
-      - .:/plugins/manyfold_myminifactory:ro
+      - .:/plugins/manyfold_printables:ro
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--spider", "http://127.0.0.1:3214/health"]
       interval: 5s

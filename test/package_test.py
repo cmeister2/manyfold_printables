@@ -17,15 +17,15 @@ class PackageTest(unittest.TestCase):
         (self.root / "bin").mkdir()
         shutil.copyfile(Path(__file__).resolve().parents[1] / "bin/package", self.root / "bin/package")
         self.runtime = {
-            "manyfold_myminifactory.gemspec": 'Gem::Specification.new do |spec|\n  spec.version = "0.0.0"\nend\n',
+            "manyfold_printables.gemspec": 'Gem::Specification.new do |spec|\n  spec.version = "0.0.0"\nend\n',
             "app/views/status.html.erb": "<p>Status</p>\n",
             "config/routes.rb": "# Routes\n",
             "db/migrate/create_library_models.rb": "# Migration\n",
-            "lib/manyfold_myminifactory.rb": "# Plugin\n",
+            "lib/manyfold_printables.rb": "# Plugin\n",
         }
         for name, content in self.runtime.items():
             self.write(name, content)
-        (self.root / "lib/manyfold_myminifactory.rb").chmod(0o755)
+        (self.root / "lib/manyfold_printables.rb").chmod(0o755)
         for name in ("README.md", "test/plugin_test.rb", "Dockerfile", "node_modules/package/index.js", ".git/config", "dist/old.zip"):
             self.write(name, "Excluded\n")
 
@@ -40,32 +40,32 @@ class PackageTest(unittest.TestCase):
     def test_default_version_and_installable_archive(self):
         result = self.run_package()
         self.assertEqual(result.returncode, 0, result.stderr)
-        output = self.root / "dist/manyfold_myminifactory.zip"
+        output = self.root / "dist/manyfold_printables.zip"
         self.assertEqual(result.stdout.strip(), str(output))
         with zipfile.ZipFile(output) as archive:
             self.assertEqual(set(archive.namelist()), set(self.runtime))
             for name, content in self.runtime.items():
                 self.assertEqual(archive.read(name).decode("utf-8"), content)
-            self.assertEqual(stat.S_IMODE(archive.getinfo("lib/manyfold_myminifactory.rb").external_attr >> 16), 0o755)
+            self.assertEqual(stat.S_IMODE(archive.getinfo("lib/manyfold_printables.rb").external_attr >> 16), 0o755)
 
     def test_release_version_changes_archive_only(self):
         result = self.run_package("1.2.3")
         self.assertEqual(result.returncode, 0, result.stderr)
-        with zipfile.ZipFile(self.root / "dist/manyfold_myminifactory.zip") as archive:
-            expected = self.runtime["manyfold_myminifactory.gemspec"].replace('"0.0.0"', '"1.2.3"')
-            self.assertEqual(archive.read("manyfold_myminifactory.gemspec").decode("utf-8"), expected)
-        self.assertEqual((self.root / "manyfold_myminifactory.gemspec").read_text(encoding="utf-8"), self.runtime["manyfold_myminifactory.gemspec"])
+        with zipfile.ZipFile(self.root / "dist/manyfold_printables.zip") as archive:
+            expected = self.runtime["manyfold_printables.gemspec"].replace('"0.0.0"', '"1.2.3"')
+            self.assertEqual(archive.read("manyfold_printables.gemspec").decode("utf-8"), expected)
+        self.assertEqual((self.root / "manyfold_printables.gemspec").read_text(encoding="utf-8"), self.runtime["manyfold_printables.gemspec"])
 
     def test_upgrade_replaces_the_same_package(self):
         (self.root / "dist/old.zip").unlink()
         for version in ("0.1.0", "1.2.3"):
             result = self.run_package(version)
             self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertEqual(list((self.root / "dist").iterdir()), [self.root / "dist/manyfold_myminifactory.zip"])
-            with zipfile.ZipFile(self.root / "dist/manyfold_myminifactory.zip") as archive:
-                expected = self.runtime["manyfold_myminifactory.gemspec"].replace('"0.0.0"', f'"{version}"')
-                self.assertEqual(archive.read("manyfold_myminifactory.gemspec").decode("utf-8"), expected)
-            self.assertEqual((self.root / "manyfold_myminifactory.gemspec").read_text(encoding="utf-8"), self.runtime["manyfold_myminifactory.gemspec"])
+            self.assertEqual(list((self.root / "dist").iterdir()), [self.root / "dist/manyfold_printables.zip"])
+            with zipfile.ZipFile(self.root / "dist/manyfold_printables.zip") as archive:
+                expected = self.runtime["manyfold_printables.gemspec"].replace('"0.0.0"', f'"{version}"')
+                self.assertEqual(archive.read("manyfold_printables.gemspec").decode("utf-8"), expected)
+            self.assertEqual((self.root / "manyfold_printables.gemspec").read_text(encoding="utf-8"), self.runtime["manyfold_printables.gemspec"])
 
     def test_invalid_versions_create_no_package(self):
         for version in ("01.2.3", "1.2", "v1.2.3", "1.2.3-beta.1", "../1.2.3", "1.2.3/other"):

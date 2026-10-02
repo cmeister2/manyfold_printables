@@ -1,0 +1,7 @@
+<h1>Printables</h1>
+<p><%= @linked ? "Printables is enabled" : "Printables is disabled" %></p>
+<p>Choose <strong>Link to Printables</strong> from a model's menu to search public Printables models or enter a model URL. Linking syncs its details and images.</p>
+<p>Download 3D model files from Printables and import them into Manyfold separately.</p>
+<% if policy(:settings).integrations? %>
+  <p><%= link_to "Printables integration settings", main_app.integrations_settings_path %></p>
+<% end %>

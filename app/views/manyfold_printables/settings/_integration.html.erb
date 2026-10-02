@@ -1,0 +1,10 @@
+<%= Accordion(title: "Printables - #{ManyfoldPrintables::ApiClient.configured? ? 'enabled' : 'disabled'}", id: "printables-integration") do %>
+  <p>Link public Printables models and sync their details and images. No account credentials are required.</p>
+  <%= form_with url: manyfold_printables.settings_path, method: :patch, id: "printables-settings-form" do |form| %>
+    <div class="form-check mb-3">
+      <%= form.check_box :enabled, checked: SiteSettings.printables_enabled, class: "form-check-input" %>
+      <%= form.label :enabled, "Enable Printables linking and sync", class: "form-check-label" %>
+    </div>
+    <%= form.submit "Save Printables settings", class: "btn btn-primary" %>
+  <% end %>
+<% end %>

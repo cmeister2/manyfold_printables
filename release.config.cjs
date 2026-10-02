@@ -8,7 +8,7 @@ module.exports = {
       prepareCmd: "python3 bin/package ${nextRelease.version}",
     }],
     ["@semantic-release/github", {
-      assets: [{ path: "dist/manyfold_myminifactory.zip" }],
+      assets: [{ path: "dist/manyfold_printables.zip" }],
       successCommentCondition: false,
       failCommentCondition: false,
       failTitle: false,

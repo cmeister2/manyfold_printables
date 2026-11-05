@@ -15,6 +15,15 @@ require "fileutils"
 ActiveJob::Base.queue_adapter = :test
 Warden.test_mode!
 
+# Minitest autorun starts after rails runner has closed its executor context.
+# Let request middleware open its own executor while retaining CurrentAttributes.
+module PrintablesTestExecutionContext
+  def run
+    Rails.application.executor.perform { super }
+  end
+end
+Minitest::Test.prepend(PrintablesTestExecutionContext)
+
 class PrintablesPluginTest < Minitest::Test
   include Warden::Test::Helpers
   include ActiveSupport::Testing::TimeHelpers
@@ -84,6 +93,13 @@ class PrintablesPluginTest < Minitest::Test
   end
 
   private
+
+  # Manyfold renamed the federation actor association after our minimum host.
+  def federation_actor(record)
+    return unless record
+
+    record.respond_to?(:fedipub_actor) ? record.fedipub_actor : record.federails_actor
+  end
 
   def browser(user)
     Warden.test_reset!

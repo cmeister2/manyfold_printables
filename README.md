@@ -69,6 +69,12 @@ bin/test
 
 This runs package checks, then the plugin suite against both the source tree and an extracted ZIP. It checks the version loaded by Manyfold from the packaged gemspec. Each container uses a disposable database and Redis; temporary files and containers are cleaned up afterward.
 
+Development and tests default to Manyfold 0.154.0. CI checks both 0.154.0 and the minimum supported host, 0.146.0. To test another host image locally:
+
+```sh
+MANYFOLD_TEST_IMAGE=manyfold3d/manyfold-solo:0.146.0 bin/test
+```
+
 Release tooling tests require Node 24.15 or newer:
 
 ```sh

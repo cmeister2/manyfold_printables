@@ -9,6 +9,12 @@ class PrintablesPluginTest
       downloads = []
       with_image_download(downloads) do
         local = model.create_or_update_file_from_url(url: "https://example.invalid/local-preview.png", filename: "preview.png")
+        # Newer hosts promote downloads in a worker; finish that normal step
+        # before checking preservation of the files in library storage.
+        if defined?(::FilePromoteJob) && local.attachment_attacher.cached?
+          ::FilePromoteJob.perform_now(ModelFileUploader::Attacher.name, ModelFile.name,
+            local.id, "attachment", local.attachment.data)
+        end
         local_data = local.reload.attachment_data
         local_path = File.join(@library_path, model.path, "preview.png")
         local_contents = File.binread(local_path)

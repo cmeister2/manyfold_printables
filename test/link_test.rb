@@ -237,7 +237,7 @@ class PrintablesPluginTest
         headers: {"HTTP_ORIGIN" => origin})
       assert_equal 404, session.response.status
 
-      model.federails_actor.update_columns(local: false)
+      federation_actor(model).update_columns(local: false)
       refute ::ModelPolicy.new(@users.first, model.reload).sync?
       session.get("/manyfold_printables/link", params: {model_id: model.to_param})
       assert_equal 404, session.response.status
@@ -292,9 +292,9 @@ class PrintablesPluginTest
         assert_empty client.calls
         assert_empty model.links.reload
         assert_equal original, model.reload.attributes
-        model.federails_actor.update_columns(local: false)
+        federation_actor(model).update_columns(local: false)
         ManyfoldPrintables::SyncJob.perform_now(model.id, @users.first.id, "92001")
-        model.federails_actor.update_columns(local: true)
+        federation_actor(model).update_columns(local: true)
         SiteSettings.printables_enabled = false
         ManyfoldPrintables::SyncJob.perform_now(model.id, @users.first.id, "92001")
       end
@@ -364,7 +364,7 @@ class PrintablesPluginTest
     model = ::Model.create!(library: @library, name: name, path: path, permission_preset: "member", owner: @users.first)
     yield model
   ensure
-    model&.federails_actor&.update_columns(local: true) if model&.persisted?
+    federation_actor(model)&.update_columns(local: true) if model&.persisted?
     model&.destroy!
     ::Creator.where.not(id: creators_before).find_each(&:destroy!) if creators_before
     ActsAsTaggableOn::Tag.where.not(id: tags_before).destroy_all if tags_before
